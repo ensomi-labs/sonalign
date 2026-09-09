@@ -212,6 +212,13 @@ def verify_crate(archive: bytes, version: str, commit: str) -> None:
     expected = set(subprocess.check_output(
         ["cargo", "package", "--list", "--locked"], cwd=ROOT, text=True,
     ).splitlines())
+    # Cargo consumers use the normalized manifest, not Cargo.toml.orig. Generate
+    # that file with the release's pinned Cargo version before accepting a retry.
+    with tempfile.TemporaryDirectory(prefix="sonalign-package-check-") as temporary:
+        run("cargo", "package", "--no-verify", "--locked", "--target-dir", temporary)
+        package = Path(temporary) / "package" / f"sonalign-{version}.crate"
+        with tarfile.open(package, mode="r:gz") as local:
+            normalized_manifest = local.extractfile(f"sonalign-{version}/Cargo.toml").read()
     with tarfile.open(fileobj=io.BytesIO(archive), mode="r:gz") as source:
         prefix = f"sonalign-{version}/"
         files = {}
@@ -231,6 +238,8 @@ def verify_crate(archive: bytes, version: str, commit: str) -> None:
             raise SystemExit("Published crate does not record this clean release tag commit.")
         if vcs.get("path_in_vcs", "") != "":
             raise SystemExit("Published crate does not come from the standalone repository root.")
+        if files["Cargo.toml"] != normalized_manifest:
+            raise SystemExit("Published crate's effective Cargo.toml differs from this checkout's package.")
         for name, contents in files.items():
             if name in ("Cargo.toml", ".cargo_vcs_info.json"):
                 continue
