@@ -89,6 +89,10 @@ is destroyed; callers must not access a handle concurrently or after destruction
 Check returned status codes before inspecting results. Unset numeric optionals
 use NaN as described in the header. An internal unwinding panic poisons the handle.
 
+The macOS shared library uses `@rpath/libsonalign.dylib`; an application must embed
+it and supply an appropriate runtime search path (for example,
+`@executable_path/lib`). Binary ZIPs include the MIT license and dependency notices.
+
 ## Signal and timing contract
 
 - Reference and query must share the same PCEN parameters, band order, sample-rate
@@ -176,6 +180,8 @@ workflow from GitHub Actions with the version (without `v`). The workflow:
 The workflow uses the `release` environment, restricted to `main`. Repository
 variable `CARGO_TRUSTED_PUBLISHING=true` selects crates.io OIDC authentication;
 the `CARGO_REGISTRY_TOKEN` environment secret is the fallback. Release tags and
-existing assets are checked before writes and are never force-replaced. Concurrent
+existing assets are checked before writes and are never force-replaced. A retry
+accepts only the original source or its exact generated Swift-checksum commit;
+an already-published crate must match the tagged source and clean VCS provenance. Concurrent
 release runs are serialized, and an intervening `main` update prevents the release
 commit from being pushed.
