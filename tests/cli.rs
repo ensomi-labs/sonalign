@@ -10,10 +10,8 @@ fn replay_never_truncates_input_aliases_or_previous_results_on_error() {
         .duration_since(UNIX_EPOCH)
         .unwrap()
         .as_nanos();
-    let directory = std::env::temp_dir().join(format!(
-        "sonalign-cli-{}-{nonce}",
-        std::process::id()
-    ));
+    let directory =
+        std::env::temp_dir().join(format!("sonalign-cli-{}-{nonce}", std::process::id()));
     fs::create_dir(&directory).unwrap();
     let input = directory.join("cases.jsonl");
     fs::write(&input, "malformed case\n").unwrap();

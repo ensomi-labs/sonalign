@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-09",
+  "sonalignSourceCommit": "b1d827a80485131c6a99bbbf94074e02a6619029",
+  "swiftBaselineCommit": "82381d34e8166050531919b070131117bb1e13ee",
+  "scope": "Shared cached PCEN features; cold matcher/tracker entries; excludes decoding/resampling/feature extraction",
+  "recordingEnergy": "Exports omit energy; fixture frames use -20 dBFS; synthetic energy files test readiness",
+  "privateCorpusDistributed": false,
+  "behavioralParityPassed": true,
+  "exactDiagnosticCandidateParityPassed": false,
+  "counts": {
+    "mismatches": 0,
+    "diagnosticCandidateDifferences": 5,
+    "unexplainedDiagnosticCandidateDifferences": 0,
+    "swiftWrongReferenceAcquisitions": 0,
+    "rustWrongReferenceAcquisitions": 0,
+    "events": 41702,
+    "cases": 440,
+    "syntheticCases": 20,
+    "swiftFixtureAcquisitions": 24,
+    "rustFixtureAcquisitions": 24,
+    "fixtureCases": 24,
+    "swiftEntryAcquisitions": 11,
+    "swiftEntryEndingLocked": 9,
+    "rustEntryAcquisitions": 11,
+    "rustEntryEndingLocked": 9,
+    "entryCases": 11,
+    "wrongCases": 384,
+    "stressCases": 1,
+    "swiftFixtureEndingLocked": 20,
+    "rustFixtureEndingLocked": 20
+  },
+  "maximumAbsoluteDeltas": {
+    "activeFrameFraction": 0.0,
+    "coastMS": 0.0,
+    "competingPeakMargin": 5.843080330691919e-08,
+    "confidence": 7.328004980600156e-08,
+    "confirmedLockElapsedMS": 0.0,
+    "correlation": 7.328004980600156e-08,
+    "denseMargin": 5.843080330691919e-08,
+    "elapsedMS": 2.9103830456733704e-11,
+    "endpointMS": 0.0,
+    "finalLockElapsedMS": 0.0,
+    "firstHalfCorrelation": 4.3744871391915296e-08,
+    "firstProvisionalLockElapsedMS": 1.8189894035458565e-12,
+    "freshEvidenceMS": 0.0,
+    "offsetMS": 1.3404285709839314e-05,
+    "offsetStabilityMS": 1.4967632523621432e-05,
+    "queryDurationMS": 0.0,
+    "queryEndpointRecordedTimeMS": 0.0,
+    "recentCorrelation": 5.551978510265343e-08,
+    "referenceTimeMS": 1.3404285709839314e-05,
+    "secondHalfCorrelation": 6.597098167748783e-08,
+    "trackCount": 0.0,
+    "trackInnovationMS": 1.4967632523621432e-05
+  },
+  "diagnosticCandidateExplanation": {
+    "equalStrengthDuplicateAlternatives": 3,
+    "equalStrengthPermutedAlternatives": 2,
+    "note": "All differences are nonleading diagnostic alternatives; no published estimate or state-transition mismatch. Duplicate alternatives were checked against identical reference support."
+  },
+  "timing": {
+    "scope": "Optimized engine.process only; excludes allocation of input windows, decoding, features and index construction",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "caveat": "Single local replay, not a controlled device benchmark. Includes concurrent unrelated build activity.",
+    "results": {
+      "swift": {
+        "synthetic": {
+          "calls": 2507,
+          "totalMS": 79.65567399999985,
+          "p50MS": 0.006333,
+          "p95MS": 0.125375,
+          "maxMS": 0.362791
+        },
+        "fixture": {
+          "calls": 1555,
+          "totalMS": 727.8416840000009,
+          "p50MS": 0.504167,
+          "p95MS": 0.927333,
+          "maxMS": 1.312041
+        },
+        "entry": {
+          "calls": 341,
+          "totalMS": 146.0835550000001,
+          "p50MS": 0.45025,
+          "p95MS": 0.931625,
+          "maxMS": 1.068
+        },
+        "wrong": {
+          "calls": 37016,
+          "totalMS": 24416.50272999986,
+          "p50MS": 0.668459,
+          "p95MS": 0.899417,
+          "maxMS": 1.701334
+        },
+        "stress": {
+          "calls": 283,
+          "totalMS": 29.367883000000006,
+          "p50MS": 0.092084,
+          "p95MS": 0.483042,
+          "maxMS": 0.66375
+        }
+      },
+      "rust": {
+        "synthetic": {
+          "calls": 2507,
+          "totalMS": 65.72279000000073,
+          "p50MS": 0.000542,
+          "p95MS": 0.122458,
+          "maxMS": 0.3625
+        },
+        "fixture": {
+          "calls": 1555,
+          "totalMS": 1297.1158410000025,
+          "p50MS": 0.857084,
+          "p95MS": 1.777667,
+          "maxMS": 2.058917
+        },
+        "entry": {
+          "calls": 341,
+          "totalMS": 247.32475100000022,
+          "p50MS": 0.71425,
+          "p95MS": 1.699083,
+          "maxMS": 2.516666
+        },
+        "wrong": {
+          "calls": 37016,
+          "totalMS": 47406.5775220009,
+          "p50MS": 1.297083,
+          "p95MS": 1.859,
+          "maxMS": 18.668209
+        },
+        "stress": {
+          "calls": 283,
+          "totalMS": 38.68195600000002,
+          "p50MS": 0.102167,
+          "p95MS": 0.778,
+          "maxMS": 0.924916
+        }
+      }
+    }
+  },
+  "evidence": {
+    "replayBinarySHA256": "90fb1656bcbd81a2b13c5fd711fa3d886f70397ac43959eb133987869de4a4db",
+    "sonalignSourcesSHA256": {
+      "Cargo.lock": "0281826209d86986c992ee62d3f8e28734f44c92f346a1ee5ed00193fc9d9cbe",
+      "Cargo.toml": "572e92044ff71e60259bfbb278a018dfe570951157fe5ebf986892eb88c6cab4",
+      "src/bin/replay.rs": "a0844aa35c076321dce16b375336cc98d7d6a9e921ff4dd7a92ac860046e6115",
+      "src/engine.rs": "fb8582dcd1b9643cdbceac5f663bb8a47925cd54ebf550c82c5d027d267465ad",
+      "src/ffi.rs": "8c786000745856cf300975cf2a19e847734494330c82163e63934f552b8c47e7",
+      "src/lib.rs": "dd8eefafaaba1f79269eaa2906a4d2c1143041811b1ad8c2beaeae5b7cc3743d",
+      "src/matcher.rs": "cb1dbc443169d877e98748c76d212fe8bf732cf02538409d948b23e97ef34fd9",
+      "src/types.rs": "4976dcc8d3820e2f3e36e696629575cc51f1817d8eb920d5ab6409fd88d8bddc"
+    },
+    "swiftSourcesSHA256": {
+      "Sources/PulsefieldCore/Domain/AmbientSyncDomain.swift": "0cbb59a5934b896518b1068afc7710c71dcaf9ec13f149ece67a1e72011252d7",
+      "Sources/PulsefieldCore/Services/AmbientSync/AmbientSyncEngine.swift": "e3709151c869660b82a762e7f15c1f1223d819b60399df189340863a66532375",
+      "Sources/PulsefieldCore/Services/AmbientSync/AmbientSyncEngineConfidence.swift": "2f9c1f9d20e9fa4244f75fc0dc47e295efdcc2504b393972acb5779a5f5e46d2",
+      "Sources/PulsefieldCore/Services/AmbientSync/AmbientSyncEngineConfiguration.swift": "f1157adcf8c24e39cf748e64a9eece0145fee6208c1ad36bbfdf63cc115b86fa",
+      "Sources/PulsefieldCore/Services/AmbientSync/AmbientSyncEngineDiagnostics.swift": "656a623dc4af6f92adf103fbbf21e6cc515b097087b0456f8a64f99de053f612",
+      "Sources/PulsefieldCore/Services/AmbientSync/AmbientSyncEngineGates.swift": "ef8cdddc6f1d3c8b0e2270d5665d1b2b8395b4e79a72b51f08bfdabe8a44c53e",
+      "Sources/PulsefieldCore/Services/AmbientSync/AmbientSyncEngineLandmarks.swift": "6c846576b268992e26f518648d15c78e42a9fff5385b7f9733ad7d5ae8b89922",
+      "Sources/PulsefieldCore/Services/AmbientSync/AmbientSyncEngineReadiness.swift": "7c01248f7139c4a49abb429a9c5bc81c43f24a39d92f897dac044b12e0f85ada",
+      "Sources/PulsefieldCore/Services/AmbientSync/AmbientSyncEngineReference.swift": "c6067fea804a4afa5060cf1e44e08c80d1fc8abf8c05ed366774290acec4a6af",
+      "Sources/PulsefieldCore/Services/AmbientSync/AmbientSyncEngineTracking.swift": "4caa9700626aa89ec6730398054acf6908229b1bd39041b442fe3f75903d313f",
+      "Sources/PulsefieldCore/Services/AmbientSync/AmbientSyncOffsetHistogram.swift": "1fe4899d5753322843bd81205f62e433a7537c086a0cd126665d10e8904cde38",
+      "Sources/PulsefieldCore/Services/AmbientSync/AmbientSyncOffsetTracker.swift": "12cc75bb193b957e984f13d867f5152a5ce5b62e6f0d1b9b0fdf3fbb0da7eb28",
+      "Sources/PulsefieldCore/Services/AmbientSync/AmbientSyncSpectralEngine.swift": "370fbb21da065a292c9925ad91a826a13920c245f84ac0a1dfa11e5eed539408",
+      "Sources/PulsefieldCore/Services/AmbientSync/AmbientSyncSpectralMatcher.swift": "4fcd2dffa610a0bf5e5ca9eff8d701c71c20c065982d91930c163f22573bc1b8",
+      "Tools/rust_sync_parity.swift": "3c36d4da583f611ec3dd37f29c8e5b4d7a004474fa6f82cddcd8e8bb034aef51"
+    },
+    "comparatorSHA256": "b45a40c61d68a9649cd56635e7d167d8f4f576751141cb3eb33eeb5fc17f2ec4"
+  }
+}

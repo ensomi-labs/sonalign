@@ -1,6 +1,6 @@
-use sonalign::{Configuration, Engine, FeatureFrame, FeatureWindow};
 use serde::Deserialize;
 use serde_json::{json, Value};
+use sonalign::{Configuration, Engine, FeatureFrame, FeatureWindow};
 use std::{
     error::Error,
     fs,
@@ -19,10 +19,8 @@ impl Output {
         if let Some(path) = path {
             let destination = std::path::PathBuf::from(path);
             let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
-            let temporary = destination.with_file_name(format!(
-                ".sonalign-{}-{nonce}.tmp",
-                std::process::id()
-            ));
+            let temporary =
+                destination.with_file_name(format!(".sonalign-{}-{nonce}.tmp", std::process::id()));
             let file = fs::OpenOptions::new()
                 .write(true)
                 .create_new(true)
