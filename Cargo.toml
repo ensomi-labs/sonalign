@@ -1,0 +1,28 @@
+[package]
+name = "sonalign"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.88"
+description = "Known-audio alignment and streaming position tracking from spectral features"
+license = "MIT"
+repository = "https://github.com/Pulsefield/sonalign"
+homepage = "https://github.com/Pulsefield/sonalign"
+readme = "README.md"
+keywords = ["audio", "alignment", "synchronization", "dsp", "streaming"]
+categories = ["multimedia::audio", "algorithms"]
+include = ["src/**", "tests/**", "include/**", "Cargo.toml", "Cargo.lock", "LICENSE", "README.md"]
+
+[lib]
+crate-type = ["rlib", "staticlib", "cdylib"]
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[[bin]]
+name = "sonalign-replay"
+path = "src/bin/replay.rs"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

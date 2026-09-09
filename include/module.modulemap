@@ -1,0 +1,4 @@
+module SonalignFFI {
+    header "sonalign.h"
+    export *
+}
