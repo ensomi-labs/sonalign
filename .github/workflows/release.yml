@@ -1,0 +1,121 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version already set in Cargo.toml on main (for example 0.1.0)'
+        required: true
+        type: string
+      trusted_publishing:
+        description: 'Use trusted publishing (also enabled by CARGO_TRUSTED_PUBLISHING=true)'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sonalign-release
+  cancel-in-progress: false
+
+env:
+  RUST_VERSION: 1.98.1
+  VERSION: ${{ inputs.version }}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    outputs:
+      commit: ${{ steps.source.outputs.commit }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Validate release source and version
+        id: source
+        run: |
+          test "$GITHUB_REF" = refs/heads/main
+          python scripts/release.py validate "$VERSION"
+
+  checks:
+    needs: validate
+    uses: ./.github/workflows/ci.yml
+    with:
+      source_ref: ${{ needs.validate.outputs.commit }}
+
+  github-release:
+    name: Pin Swift checksum, tag, and publish assets
+    needs: [validate, checks]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      commit: ${{ steps.release.outputs.commit }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.validate.outputs.commit }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: sonalign-*
+          merge-multiple: true
+          path: .build/dist
+      - name: Set release commit author
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      - name: Commit checksum and publish immutable release artifacts
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/release.py finalize "$VERSION" --assets .build/dist
+
+  crates-io:
+    name: Publish crate if the version is not already published
+    needs: github-release
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.github-release.outputs.commit }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install Rust
+        run: |
+          rustup toolchain install "$RUST_VERSION" --profile minimal
+          rustup default "$RUST_VERSION"
+      - name: Check tag, crate version, and crates.io
+        id: crate
+        run: python scripts/release.py crate-status "$VERSION"
+      - name: Obtain a short-lived crates.io token
+        id: auth
+        if: inputs.trusted_publishing || vars.CARGO_TRUSTED_PUBLISHING == 'true'
+        continue-on-error: ${{ env.CARGO_REGISTRY_TOKEN != '' }}
+        uses: rust-lang/crates-io-auth-action@v1
+      - name: Publish to crates.io
+        if: steps.crate.outputs.published != 'true'
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token || secrets.CARGO_REGISTRY_TOKEN }}
+        run: |
+          if [ -z "$CARGO_REGISTRY_TOKEN" ]; then
+            echo 'Set CARGO_REGISTRY_TOKEN in the release environment or enable trusted publishing.' >&2
+            exit 1
+          fi
+          cargo publish --locked
