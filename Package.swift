@@ -4,7 +4,7 @@ import PackageDescription
 
 // Updated by the release workflow after the binary artifact is built and tested.
 private let releaseURL = "https://github.com/Pulsefield/sonalign/releases/download/v0.1.0/SonalignFFI.xcframework.zip"
-private let releaseChecksum = "0000000000000000000000000000000000000000000000000000000000000000"
+private let releaseChecksum = "678ee71e81a8073a564913507376c4602a6ae235bd134f8e07f1275227f6fd90"
 
 let binary: Target
 if let path = ProcessInfo.processInfo.environment["SONALIGN_XCFRAMEWORK_PATH"], !path.isEmpty {
