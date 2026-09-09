@@ -10,7 +10,7 @@ homepage = "https://github.com/Pulsefield/sonalign"
 readme = "README.md"
 keywords = ["audio", "alignment", "synchronization", "dsp", "streaming"]
 categories = ["multimedia::audio", "algorithms"]
-include = ["src/**", "tests/**", "include/**", "Cargo.toml", "Cargo.lock", "LICENSE", "README.md"]
+include = ["/src/**", "/tests/**", "/include/**", "/Cargo.toml", "/Cargo.lock", "/LICENSE", "/README.md"]
 
 [lib]
 crate-type = ["rlib", "staticlib", "cdylib"]
