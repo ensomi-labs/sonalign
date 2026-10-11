@@ -49,7 +49,7 @@ index produces `Failed / IndexUnavailable` snapshots.
 
 ## Swift
 
-Add `https://github.com/Pulsefield/sonalign` as a Swift package and select the
+Add `https://github.com/ensomi-labs/sonalign` as a Swift package and select the
 `Sonalign` library product. Tagged releases pin an XCFramework URL and SHA-256
 checksum in `Package.swift`.
 
