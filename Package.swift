@@ -3,7 +3,7 @@ import Foundation
 import PackageDescription
 
 // Updated by the release workflow after the binary artifact is built and tested.
-private let releaseURL = "https://github.com/Pulsefield/sonalign/releases/download/v0.1.0/SonalignFFI.xcframework.zip"
+private let releaseURL = "https://github.com/ensomi-labs/sonalign/releases/download/v0.1.0/SonalignFFI.xcframework.zip"
 private let releaseChecksum = "678ee71e81a8073a564913507376c4602a6ae235bd134f8e07f1275227f6fd90"
 
 let binary: Target
