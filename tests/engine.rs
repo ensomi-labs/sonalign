@@ -162,6 +162,45 @@ fn early_confirmation_becomes_final_once_the_window_is_long_enough() {
 }
 
 #[test]
+fn weak_search_at_the_pending_position_keeps_the_estimate() {
+    let reference = frames(2_000, 1);
+    let matching = capture(&reference, 200, 160, false);
+    let unrelated = capture(&frames(2_000, 97), 200, 500, false);
+    // Faint matching audio for 3.2 s, then unrelated audio on the same timeline.
+    let query = matching
+        .iter()
+        .zip(&unrelated)
+        .map(|(m, u)| {
+            let values = m.pcen_mel.iter().zip(&u.pcen_mel);
+            frame(
+                m.recorded_time_ms,
+                values.map(|(a, b)| 0.4 * a + 0.6 * b).collect(),
+            )
+        })
+        .chain(unrelated[160..].iter().cloned())
+        .collect::<Vec<_>>();
+    let mut engine = engine(&reference);
+    let (mut held, mut released) = (0, false);
+    for end in (0..=495).step_by(5) {
+        let result = engine.process(&window(&query, end), end as f64 * 20.0);
+        assert!(!matches!(result.state, State::Confirmed | State::Locked));
+        let spectral = &result.diagnostics.spectral;
+        if spectral.global_search && spectral.correlation < 0.25 {
+            // A weak search still at the pending position keeps the estimate,
+            // until an ambiguous search or staleness releases it.
+            match result.estimate {
+                Some(estimate) => {
+                    assert!((estimate.offset_ms - 4_000.0).abs() < 8.0);
+                    held += 1;
+                }
+                None => released = true,
+            }
+        }
+    }
+    assert!(held > 0 && released);
+}
+
+#[test]
 fn seek_relocks_and_does_not_keep_old_audio_alive() {
     let reference = frames(2_500, 1);
     let query = (0..900)

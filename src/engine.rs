@@ -256,7 +256,20 @@ impl Engine {
                     locally_supported = true;
                 }
             } else {
-                self.pending = None;
+                // A weak search whose unambiguous best peak stays at the pending
+                // position is not evidence against it. Keep the hypothesis without
+                // new evidence until it goes stale; a peak elsewhere, an ambiguous
+                // search or staleness still discards it.
+                let held = self.pending.as_ref().is_some_and(|pending| {
+                    result
+                        .best()
+                        .is_some_and(|best| (best.offset_ms - pending.offset_ms).abs() <= 80.0)
+                        && result.margin() >= 0.06
+                        && evidence_ms - pending.last_evidence_ms <= 2_500.0
+                });
+                if !held {
+                    self.pending = None;
+                }
             }
         }
 
