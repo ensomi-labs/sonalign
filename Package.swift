@@ -3,8 +3,8 @@ import Foundation
 import PackageDescription
 
 // Updated by the release workflow after the binary artifact is built and tested.
-private let releaseURL = "https://github.com/ensomi-labs/sonalign/releases/download/v0.1.0/SonalignFFI.xcframework.zip"
-private let releaseChecksum = "678ee71e81a8073a564913507376c4602a6ae235bd134f8e07f1275227f6fd90"
+private let releaseURL = "https://github.com/ensomi-labs/sonalign/releases/download/v0.1.1/SonalignFFI.xcframework.zip"
+private let releaseChecksum = "3752bab9987caa10d52cb9418f07251b701bccef73ecb0c9a5dc39907ac83086"
 
 let binary: Target
 if let path = ProcessInfo.processInfo.environment["SONALIGN_XCFRAMEWORK_PATH"], !path.isEmpty {
