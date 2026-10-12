@@ -1,12 +1,12 @@
 [package]
 name = "sonalign"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2021"
 rust-version = "1.88"
 description = "Known-audio alignment and streaming position tracking from spectral features"
 license = "MIT"
-repository = "https://github.com/Pulsefield/sonalign"
-homepage = "https://github.com/Pulsefield/sonalign"
+repository = "https://github.com/ensomi-labs/sonalign"
+homepage = "https://github.com/ensomi-labs/sonalign"
 readme = "README.md"
 keywords = ["audio", "alignment", "synchronization", "dsp", "streaming"]
 categories = ["multimedia::audio", "algorithms"]
