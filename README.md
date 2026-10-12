@@ -138,6 +138,22 @@ any of the 384 wrong-reference trials. Maximum published offset difference was
 ordering or identical repeated material; exact diagnostic-list parity did not pass.
 
 This is a migration-parity check, not a claim of absolute acoustic timing accuracy.
+
+Acquisition has since departed from that baseline in two places:
+
+- A lock confirmed early from a short window becomes final at the first window long
+  enough for a final lock. It no longer waits for the next search at the tracking
+  interval.
+- A weak search whose unambiguous best peak stays at the pending position keeps
+  that hypothesis and its estimate. The search adds no evidence; a peak elsewhere,
+  an ambiguous search or 2.5 s without support still discards the hypothesis.
+
+The private corpus was replayed on a 100 ms schedule: 24 recordings, 100 later
+entries and 192 wrong-reference sessions. Final locks came 1.07 s or 1.6 s earlier
+in 46 sessions, and 4.8 s and 12.3 s earlier in two others. No session lost its
+final lock. No wrong-reference session reached a confirmed or final lock, and
+published estimates in those sessions did not change. Final offsets moved by at
+most 2.7 ms.
 Recorded-feature replays use a fixed energy because the exports omit energy;
 synthetic cases test energy gates. Later-entry cases reset matching/tracking on
 cached features, not feature-extractor state.
