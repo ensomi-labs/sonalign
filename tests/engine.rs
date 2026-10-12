@@ -145,39 +145,49 @@ fn callback_cadence_does_not_change_evidence_requirements() {
 }
 
 #[test]
-fn early_confirmation_becomes_final_once_the_window_is_long_enough() {
+fn confirmation_is_final_without_waiting_for_a_longer_window() {
     let reference = frames(2_000, 1);
     let query = capture(&reference, 200, 500, false);
     let mut engine = engine(&reference);
-    let (mut confirmed, mut final_lock) = (None, None);
+    let longest_window_ms = window(&query, 400).duration_ms();
     for end in (0..=400).step_by(5) {
-        let result = engine.process(&window(&query, end), end as f64 * 20.0);
-        confirmed = confirmed.or(result.confirmed_lock_elapsed_ms);
-        final_lock = final_lock.or(result.final_lock_elapsed_ms);
+        let query_window = window(&query, end);
+        let result = engine.process(&query_window, end as f64 * 20.0);
+        if result.final_lock_elapsed_ms.is_some() {
+            // Final comes with the confirming evidence, while the window still grows.
+            assert_eq!(
+                result.confirmed_lock_elapsed_ms,
+                result.final_lock_elapsed_ms
+            );
+            assert!(query_window.duration_ms() < longest_window_ms);
+            return;
+        }
     }
-    // Confirmed from a short window, then Final at the first 4.5 s window rather
-    // than at the next tracking-interval search.
-    assert!(confirmed.unwrap() < 4_500.0);
-    assert_eq!(final_lock, Some(4_500.0));
+    panic!("no final lock");
 }
 
 #[test]
 fn weak_search_at_the_pending_position_keeps_the_estimate() {
     let reference = frames(2_000, 1);
-    let matching = capture(&reference, 200, 160, false);
+    let matching = capture(&reference, 200, 500, false);
     let unrelated = capture(&frames(2_000, 97), 200, 500, false);
-    // Faint matching audio for 3.2 s, then unrelated audio on the same timeline.
+    // Faint matching audio for 2.3 s, then the same audio fainter still. Later
+    // searches stay at its position but are too weak to confirm it, and soon too
+    // weak to pass the provisional gate.
     let query = matching
         .iter()
         .zip(&unrelated)
-        .map(|(m, u)| {
+        .enumerate()
+        .map(|(i, (m, u))| {
+            let weight: f32 = if i < 115 { 0.45 } else { 0.1 };
             let values = m.pcen_mel.iter().zip(&u.pcen_mel);
             frame(
                 m.recorded_time_ms,
-                values.map(|(a, b)| 0.4 * a + 0.6 * b).collect(),
+                values
+                    .map(|(a, b)| weight * a + (1.0 - weight) * b)
+                    .collect(),
             )
         })
-        .chain(unrelated[160..].iter().cloned())
         .collect::<Vec<_>>();
     let mut engine = engine(&reference);
     let (mut held, mut released) = (0, false);
