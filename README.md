@@ -141,19 +141,21 @@ This is a migration-parity check, not a claim of absolute acoustic timing accura
 
 Acquisition has since departed from that baseline in two places:
 
-- A lock confirmed early from a short window becomes final at the first window long
-  enough for a final lock. It no longer waits for the next search at the tracking
-  interval.
+- Evidence alone makes a lock final. Once passing global searches agree on a
+  position across a second of fresh audio, and the most recent second still
+  supports it, the lock is confirmed and final in the same call. The window no
+  longer has to reach 4.5 s, and `Configuration` has no final-window minimum.
 - A weak search whose unambiguous best peak stays at the pending position keeps
   that hypothesis and its estimate. The search adds no evidence; a peak elsewhere,
   an ambiguous search or 2.5 s without support still discards the hypothesis.
 
 The private corpus was replayed on a 100 ms schedule: 24 recordings, 100 later
-entries and 192 wrong-reference sessions. Final locks came 1.07 s or 1.6 s earlier
-in 46 sessions, and 4.8 s and 12.3 s earlier in two others. No session lost its
-final lock. No wrong-reference session reached a confirmed or final lock, and
-published estimates in those sessions did not change. Final offsets moved by at
-most 2.7 ms.
+entries and 192 wrong-reference sessions. The median final lock moved from 5.67 s
+to 3.65 s after the session start, for the recordings and for the later entries.
+No session lost its final lock or reached it later. No wrong-reference session
+reached a confirmed or final lock, or published more estimates than before. Final
+offsets stayed within 3.45 ms of later tracking and within 8.14 ms of an
+independent annotation of the traffic recordings.
 Recorded-feature replays use a fixed energy because the exports omit energy;
 synthetic cases test energy gates. Later-entry cases reset matching/tracking on
 cached features, not feature-extractor state.
