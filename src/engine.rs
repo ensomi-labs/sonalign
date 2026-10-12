@@ -26,8 +26,6 @@ pub struct Engine {
     accepted: Option<Hypothesis>,
     last_endpoint_ms: Option<f64>,
     last_global_search_ms: f64,
-    /// Whether the last global search used a window long enough for Final.
-    last_global_search_long: bool,
     last_snapshot: Option<Snapshot>,
     first_provisional_ms: Option<f64>,
     confirmed_ms: Option<f64>,
@@ -56,7 +54,6 @@ impl Engine {
             accepted: None,
             last_endpoint_ms: None,
             last_global_search_ms: f64::NEG_INFINITY,
-            last_global_search_long: false,
             last_snapshot: None,
             first_provisional_ms: None,
             confirmed_ms: None,
@@ -77,7 +74,6 @@ impl Engine {
                 self.pending = None;
                 self.accepted = None;
                 self.last_global_search_ms = f64::NEG_INFINITY;
-                self.last_global_search_long = false;
                 self.last_snapshot = None;
             } else if endpoint - previous < 90.0
                 && self
@@ -195,18 +191,11 @@ impl Engine {
             self.accepted = None;
         }
 
-        // Final is declared only by a global search over a long enough window. A
-        // lock confirmed early from a short window gets that search as soon as the
-        // window allows; waiting for the tracking interval adds no evidence.
-        let long_enough = query.duration_ms() >= self.configuration.minimum_final_query_duration_ms;
-        let awaiting_final = self.confirmed_ms.is_some() && self.final_ms.is_none();
         let global_interval = if locally_supported { 2_000.0 } else { 500.0 };
-        let global = endpoint - self.last_global_search_ms >= global_interval
-            || (awaiting_final && long_enough && !self.last_global_search_long);
+        let global = endpoint - self.last_global_search_ms >= global_interval;
         if global {
             result = matcher.match_query(query, None);
             self.last_global_search_ms = endpoint;
-            self.last_global_search_long = long_enough;
             if let Some(best) = result.best().filter(|best| {
                 best.score >= 0.25
                     && result.margin() >= 0.06
@@ -229,18 +218,13 @@ impl Engine {
                     last_evidence_ms: evidence_ms,
                     correlation: best.score,
                 });
+                // Evidence alone confirms the lock and makes it final: passing
+                // searches at the same peak across a second of fresh audio, with
+                // recent support. The window's length is not a further condition.
                 let fresh = evidence_ms - first_evidence_ms;
-                let strong_early = best.score >= 0.45
-                    && result.margin() >= 0.12
-                    && best.first_half_score.min(best.second_half_score) >= 0.20;
-                if fresh >= 1_000.0 - hop
-                    && best.recent_score >= 0.15
-                    && (long_enough || strong_early)
-                {
-                    if self.confirmed_ms.is_none() {
+                if fresh >= 1_000.0 - hop && best.recent_score >= 0.15 {
+                    if self.final_ms.is_none() {
                         self.confirmed_ms = Some(elapsed_ms);
-                    }
-                    if long_enough && self.final_ms.is_none() {
                         self.final_ms = Some(elapsed_ms);
                     }
                     if self.accepted.as_ref().is_none_or(|track| {

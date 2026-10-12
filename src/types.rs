@@ -77,7 +77,6 @@ impl std::error::Error for InputError {}
 #[serde(default)]
 pub struct Configuration {
     pub minimum_readiness_duration_ms: f64,
-    pub minimum_final_query_duration_ms: f64,
     pub tracking_query_duration_ms: f64,
     pub minimum_active_frame_energy_dbfs: f64,
     pub minimum_average_energy_dbfs: f64,
@@ -87,7 +86,6 @@ impl Default for Configuration {
     fn default() -> Self {
         Self {
             minimum_readiness_duration_ms: 2500.0,
-            minimum_final_query_duration_ms: 4500.0,
             tracking_query_duration_ms: 2000.0,
             minimum_active_frame_energy_dbfs: -70.0,
             minimum_average_energy_dbfs: -62.0,
@@ -99,7 +97,6 @@ impl Configuration {
     pub fn validate(&self) -> Result<(), InputError> {
         let durations = [
             self.minimum_readiness_duration_ms,
-            self.minimum_final_query_duration_ms,
             self.tracking_query_duration_ms,
         ];
         if durations.iter().any(|v| !v.is_finite() || *v <= 0.0)
