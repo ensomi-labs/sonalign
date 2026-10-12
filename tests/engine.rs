@@ -145,6 +145,23 @@ fn callback_cadence_does_not_change_evidence_requirements() {
 }
 
 #[test]
+fn early_confirmation_becomes_final_once_the_window_is_long_enough() {
+    let reference = frames(2_000, 1);
+    let query = capture(&reference, 200, 500, false);
+    let mut engine = engine(&reference);
+    let (mut confirmed, mut final_lock) = (None, None);
+    for end in (0..=400).step_by(5) {
+        let result = engine.process(&window(&query, end), end as f64 * 20.0);
+        confirmed = confirmed.or(result.confirmed_lock_elapsed_ms);
+        final_lock = final_lock.or(result.final_lock_elapsed_ms);
+    }
+    // Confirmed from a short window, then Final at the first 4.5 s window rather
+    // than at the next tracking-interval search.
+    assert!(confirmed.unwrap() < 4_500.0);
+    assert_eq!(final_lock, Some(4_500.0));
+}
+
+#[test]
 fn seek_relocks_and_does_not_keep_old_audio_alive() {
     let reference = frames(2_500, 1);
     let query = (0..900)
