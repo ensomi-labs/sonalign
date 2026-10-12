@@ -18,7 +18,7 @@ import urllib.request
 
 
 ROOT = Path(__file__).resolve().parents[1]
-REPOSITORY = "Pulsefield/sonalign"
+REPOSITORY = "ensomi-labs/sonalign"
 
 
 def run(*args: str) -> None:
@@ -38,7 +38,7 @@ def output(name: str, value: str) -> None:
 
 
 def fetch_json(url: str, *, github: bool = False) -> dict | None:
-    headers = {"User-Agent": "sonalign-release (https://github.com/Pulsefield/sonalign)"}
+    headers = {"User-Agent": "sonalign-release (https://github.com/ensomi-labs/sonalign)"}
     if github:
         headers["Accept"] = "application/vnd.github+json"
         if token := os.environ.get("GH_TOKEN"):
@@ -198,7 +198,7 @@ def crate_status(version: str) -> None:
         return
     request = urllib.request.Request(
         f"https://static.crates.io/crates/sonalign/sonalign-{version}.crate",
-        headers={"User-Agent": "sonalign-release (https://github.com/Pulsefield/sonalign)"},
+        headers={"User-Agent": "sonalign-release (https://github.com/ensomi-labs/sonalign)"},
     )
     with urllib.request.urlopen(request, timeout=30) as response:
         archive = response.read()
